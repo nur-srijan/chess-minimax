@@ -1,0 +1,7 @@
+copy
+pygame
+numpy
+numba
+spotipy
+asyncio
+
