@@ -16,8 +16,8 @@ initial_board = [
     ['.', '.', '.', '.', '.', '.', '.', '.'],
     ['.', '.', '.', '.', '.', '.', '.', '.'],
     ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['P2', 'P2', 'P2', 'P2', 'P2', 'P2', 'P2', 'P2'],
-    ['R2', 'N2', 'B2', 'Q2', 'K2', 'B2', 'N2', 'R2']
+    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
 ]
 
 def print_board(board):
@@ -186,14 +186,22 @@ class ChessGUI:
         
         # Load pieces
         self.pieces = {}
-        piece_chars = 'KQRBNPkqrbnp'
-        for piece in piece_chars:
+        white_piece_chars = 'KQRBNP'
+        black_piece_chars = 'kqrbnp'
+        for piece in white_piece_chars:
             try:
-                img_path = os.path.join('pieces', f'{piece}.png')
-                img = pygame.image.load(img_path)
-                self.pieces[piece] = pygame.transform.scale(img, (self.SQUARE_SIZE, self.SQUARE_SIZE))
+                img_path_white = os.path.join('pieces', 'white', f'{piece}.png')
+                img_path_black = os.path.join('pieces', 'black', f'{black_piece_chars[white_piece_chars.index(piece)]}.png')
+                img_white = pygame.image.load(img_path_white)
+                img_black = pygame.image.load(img_path_black)
+                self.pieces[piece] = pygame.transform.scale(img_white, (self.SQUARE_SIZE, self.SQUARE_SIZE))
+                self.pieces[black_piece_chars[white_piece_chars.index(piece)]] = pygame.transform.scale(img_black, (self.SQUARE_SIZE, self.SQUARE_SIZE))
             except:
                 print(f"Couldn't load piece image: {piece}")
+                self.pieces[piece] = pygame.Surface((self.SQUARE_SIZE, self.SQUARE_SIZE))
+                self.pieces[piece].fill(self.BLACK)
+                pygame.draw.circle(self.pieces[piece], self.WHITE, (self.SQUARE_SIZE // 2, self.SQUARE_SIZE // 2), self.SQUARE_SIZE // 3)
+                pygame.draw.circle(self.pieces[piece], self.BLACK, (self.SQUARE_SIZE // 2, self.SQUARE_SIZE // 2), self.SQUARE_SIZE // 4)
     
     def draw_board(self, board):
         for row in range(8):
@@ -207,16 +215,34 @@ class ChessGUI:
                 # Draw piece
                 piece = board[row][col]
                 if piece != '.' and piece in self.pieces:
-                    self.screen.blit(self.pieces[piece], 
+                    self.screen.blit(self.pieces[piece],
                                    (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE))
         
         pygame.display.flip()
-
+        pygame.display.update()
+    
+    def score_display(self, score):
+        font = pygame.font.Font(None, 36)
+        font_color = self.score_color(score)
+        text = font.render(f"Score: {score}", True, font_color)
+        self.screen.blit(text, (10, 10))
+        pygame.display.flip()
+        pygame.display.update()
+    def score_color(self, score):
+        if score > 0:
+            return (0, 255, 0)  # Green for positive score
+        elif score < 0:
+            return (255, 0, 0)  # Red for negative score
+        else:
+            return (255, 255, 255)  # White for zero score
+        pygame.display.flip()
+        pygame.display.update()
+    
 # Replace the main game loop with:
 def main():
     board = initial_board
     is_white_turn = True
-    depth = 3
+    depth = 4
     gui = ChessGUI()
     
     running = True
@@ -227,6 +253,9 @@ def main():
         
         gui.draw_board(board)
         move = find_best_move(board, depth, is_white_turn)
+        score = evaluate(board)
+        gui.score_display(score)
+        gui.score_color(score)
         
         if move is None:
             print("Game over!")

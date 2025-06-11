@@ -1,9 +1,11 @@
+from contextlib import redirect_stderr
 import copy
 import pygame
 import os 
 import numpy as np
 from numba import jit, cuda
 import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import time
 import json
 import webbrowser
@@ -27,12 +29,16 @@ initial_board = [
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
 ]
 
+# Global flag to track if we've already printed the GPU error
+gpu_error_printed = False
+
 def print_board(board):
     for row in board:
         print(' '.join(row))
     print()
 
 @cuda.jit
+@cuda.jit(device=True)
 def evaluate_board_cuda(board_array, piece_values, result):
     """CUDA kernel for board evaluation"""
     row, col = cuda.grid(2)
@@ -40,6 +46,7 @@ def evaluate_board_cuda(board_array, piece_values, result):
         piece = board_array[row, col]
         if piece in piece_values:
             cuda.atomic.add(result, 0, piece_values[piece])
+        return
 
 @jit(nopython=True)
 def evaluate_cpu(board_array, piece_values):
@@ -54,6 +61,7 @@ def evaluate_cpu(board_array, piece_values):
 
 def evaluate(board):
     """Evaluate the board using either GPU or CPU acceleration"""
+    global gpu_error_printed
     board_array = np.array([[ord(piece) for piece in row] for row in board], dtype=np.int32)
     piece_values = np.zeros(128, dtype=np.int32)  # ASCII range
     for piece, value in PIECE_VALUES.items():
@@ -74,11 +82,43 @@ def evaluate(board):
             threadsperblock = (4, 4)
             blockspergrid = (2, 2)
         
+        result = cuda.to_device(result)
+        piece_values = cuda.to_device(piece_values)
         evaluate_board_cuda[blockspergrid, threadsperblock](board_array, piece_values, result)
+        result.copy_to_host()
         return int(result[0])
-    except:
+    except Exception as e:
         # Fall back to CPU
-        asyncio.run(print("fall back to cpu evaluation"))
+        if not gpu_error_printed:
+            print(f"GPU evaluation failed: {str(e)}")
+            try:
+                # Initialize Spotify client with user authentication
+                sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
+                    client_id="d075525228dd4ec0a38d5adfdb26eb48",
+                    client_secret="fad5558fd65d4ee28c5334916acfbacb",
+                    redirect_uri="http://localhost:8888/callback",
+                    scope="user-modify-playback-state user-read-playback-state"
+                ))
+                
+                # Search for a fun song about computers/GPUs
+                results = sp.search(q='computer error song', limit=1)
+                if results['tracks']['items']:
+                    track = results['tracks']['items'][0]
+                    print(f"Playing: {track['name']} by {track['artists'][0]['name']}")
+                    
+                    # Get available devices
+                    devices = sp.devices()
+                    if devices['devices']:
+                        # Use the first available device
+                        device_id = devices['devices'][0]['id']
+                        # Start playback
+                        sp.start_playback(device_id=device_id, uris=[track['uri']])
+                    else:
+                        print("No active devices found. Please open Spotify on your device.")
+            except Exception as spotify_error:
+                print(f"Couldn't play song: {str(spotify_error)}")
+            
+            gpu_error_printed = True
         # Ensure board_array is contiguous for CPU evaluation
         return evaluate_cpu(board_array, piece_values)
 

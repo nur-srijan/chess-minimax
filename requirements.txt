@@ -1,4 +1,3 @@
-copy
 pygame
 numpy
 numba

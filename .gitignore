@@ -1,0 +1,29 @@
+# Caches
+.cache
+.caches
+__pycache__
+
+# Environments and environment variables
+.venv/
+.env/
+
+# Secrets
+.env
+
+# IDE
+.vscode
+.idea
+.pyd
+.windsurfrules
+.cursorrules
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.webp
+*.svg
+*.ico
