@@ -16,14 +16,3 @@ __pycache__
 .pyd
 .windsurfrules
 .cursorrules
-
-# Images
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.bmp
-*.tiff
-*.webp
-*.svg
-*.ico
