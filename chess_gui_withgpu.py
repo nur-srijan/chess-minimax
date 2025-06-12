@@ -94,8 +94,8 @@ def evaluate(board):
             try:
                 # Initialize Spotify client with user authentication
                 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-                    client_id="d075525228dd4ec0a38d5adfdb26eb48",
-                    client_secret="fad5558fd65d4ee28c5334916acfbacb",
+                    client_id="",
+                    client_secret="",
                     redirect_uri="http://localhost:8888/callback",
                     scope="user-modify-playback-state user-read-playback-state"
                 ))
