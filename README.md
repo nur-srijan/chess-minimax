@@ -2,7 +2,7 @@
 
 A Python-based Chess implementation featuring multiple game modes and AI opponents using the Minimax algorithm with Alpha-Beta pruning. The project includes a graphical user interface built with Pygame and supports different gameplay modes with varying levels of AI optimization.
 
-![Chess AI Screenshot](screenshot.png)
+![Chess AI Screenshot](images/screenshot.png)
 
 ## Features
 
