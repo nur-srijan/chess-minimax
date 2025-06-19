@@ -11,8 +11,8 @@ __pycache__
 .env
 
 # IDE
-.vscode
-.idea
+.vscode/
+.idea/
 .pyd
 .windsurfrules
 .cursorrules
