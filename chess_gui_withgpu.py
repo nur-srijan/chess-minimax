@@ -4,8 +4,6 @@ import pygame
 import os 
 import numpy as np
 from numba import jit, cuda
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import time
 import json
 import webbrowser
@@ -91,33 +89,6 @@ def evaluate(board):
         # Fall back to CPU
         if not gpu_error_printed:
             print(f"GPU evaluation failed: {str(e)}")
-            try:
-                # Initialize Spotify client with user authentication
-                sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-                    client_id="",
-                    client_secret="",
-                    redirect_uri="http://localhost:8888/callback",
-                    scope="user-modify-playback-state user-read-playback-state"
-                ))
-                
-                # Search for a fun song about computers/GPUs
-                results = sp.search(q='computer error song', limit=1)
-                if results['tracks']['items']:
-                    track = results['tracks']['items'][0]
-                    print(f"Playing: {track['name']} by {track['artists'][0]['name']}")
-                    
-                    # Get available devices
-                    devices = sp.devices()
-                    if devices['devices']:
-                        # Use the first available device
-                        device_id = devices['devices'][0]['id']
-                        # Start playback
-                        sp.start_playback(device_id=device_id, uris=[track['uri']])
-                    else:
-                        print("No active devices found. Please open Spotify on your device.")
-            except Exception as spotify_error:
-                print(f"Couldn't play song: {str(spotify_error)}")
-            
             gpu_error_printed = True
         # Ensure board_array is contiguous for CPU evaluation
         return evaluate_cpu(board_array, piece_values)
