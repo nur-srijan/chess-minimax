@@ -1,6 +1,4 @@
 pygame
 numpy
 numba
-spotipy
 asyncio
-
