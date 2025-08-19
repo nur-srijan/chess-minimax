@@ -109,7 +109,6 @@ Chess-minimax/
 - `pygame`: For the graphical user interface
 - `numpy`: For efficient array operations
 - `numba`: For JIT compilation and performance optimization
-- `spotipy`: For optional music integration (future use)
 - `asyncio`: For asynchronous operations
 
 ## Contributing
