@@ -30,7 +30,7 @@ pieces = {}
 for piece, folder in [('K', 'white'), ('Q', 'white'), ('R', 'white'), ('B', 'white'), ('N', 'white'), ('P', 'white'),
                       ('k', 'black'), ('q', 'black'), ('r', 'black'), ('b', 'black'), ('n', 'black'), ('p', 'black')]:
     try:
-        img = pygame.image.load(f'pieces/{folder}/{piece}.png')
+        img = pygame.image.load(f'pieces/{folder}/{piece}.svg')
         pieces[piece] = pygame.transform.scale(img, (75, 75))  # Scale to fit the board squares
     except pygame.error as e:
         print(f"Error loading piece image for {piece}: {e}")

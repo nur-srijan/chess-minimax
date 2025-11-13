@@ -190,8 +190,8 @@ class ChessGUI:
         black_piece_chars = 'kqrbnp'
         for piece in white_piece_chars:
             try:
-                img_path_white = os.path.join('pieces', 'white', f'{piece}.png')
-                img_path_black = os.path.join('pieces', 'black', f'{black_piece_chars[white_piece_chars.index(piece)]}.png')
+                img_path_white = os.path.join('pieces', 'white', f'{piece}.svg')
+                img_path_black = os.path.join('pieces', 'black', f'{black_piece_chars[white_piece_chars.index(piece)]}.svg')
                 img_white = pygame.image.load(img_path_white)
                 img_black = pygame.image.load(img_path_black)
                 self.pieces[piece] = pygame.transform.scale(img_white, (self.SQUARE_SIZE, self.SQUARE_SIZE))

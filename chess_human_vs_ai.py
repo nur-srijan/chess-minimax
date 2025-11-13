@@ -60,7 +60,7 @@ class ChessGUI:
                 continue
                 
             for piece_file in os.listdir(color_dir):
-                if piece_file.endswith('.png'):
+                if piece_file.endswith('.svg'):
                     piece_code = piece_file[0]  # First letter is the piece code
                     if color == 'black':
                         piece_code = piece_code.lower()

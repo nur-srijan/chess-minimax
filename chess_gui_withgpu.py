@@ -295,7 +295,7 @@ class ChessGUI:
         white_pieces = 'KQRBNP'
         for piece in white_pieces:
             try:
-                img_path = os.path.join('pieces', 'white', f'{piece}.png')
+                img_path = os.path.join('pieces', 'white', f'{piece}.svg')
                 img = pygame.image.load(img_path)
                 self.pieces[piece] = pygame.transform.scale(img, (self.SQUARE_SIZE, self.SQUARE_SIZE))
             except pygame.error as e:
@@ -305,7 +305,7 @@ class ChessGUI:
         black_pieces = 'kqrbnp'
         for piece in black_pieces:
             try:
-                img_path = os.path.join('pieces', 'black', f'{piece}.png')
+                img_path = os.path.join('pieces', 'black', f'{piece}.svg')
                 img = pygame.image.load(img_path)
                 self.pieces[piece] = pygame.transform.scale(img, (self.SQUARE_SIZE, self.SQUARE_SIZE))
             except pygame.error as e:
